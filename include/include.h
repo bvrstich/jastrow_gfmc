@@ -5,3 +5,4 @@
 #include "global.h"
 
 #include "Walker.h"
+#include "Distribution.h"
