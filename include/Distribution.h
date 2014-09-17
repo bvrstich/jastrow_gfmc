@@ -42,6 +42,8 @@ class Distribution : public vector<double> {
 
       int draw() const;
 
+      double normalize();
+
    private:
 
       //!list of final walker states

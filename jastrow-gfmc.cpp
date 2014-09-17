@@ -23,7 +23,12 @@ int main(int argc,char *argv[]){
    int Nw = atoi(argv[2]);
    double f = atof(argv[3]);
 
+   double dtau = 0.005;
+
    //initialize the dimensions of the problem, set the trial
-   global::init(L,L,f);
+   global::init(L,L,f,dtau);
+
+   GFMC gfmc(Nw);
+   gfmc.walk(1);
 
 }

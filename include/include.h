@@ -6,3 +6,5 @@
 
 #include "Walker.h"
 #include "Distribution.h"
+
+#include "GFMC.h"

@@ -21,19 +21,23 @@ namespace global{
 
    double f;
 
+   double dtau;
+
    Random RN;
 
    /**
     * @param Lx_in x dimension of the square lattice
     * @param Ly_in y dimension of the square lattice
     * @param f_in jastrow wavefunction parameter
+    * @param dtau_in time step
     */
-   void init(int Lx_in,int Ly_in,double f_in){
+   void init(int Lx_in,int Ly_in,double f_in,double dtau_in){
 
       Lx = Lx_in;
       Ly = Ly_in;
 
       f = f_in;
+      dtau = dtau_in;
 
 #ifdef _OPENMP
       omp_num_threads = omp_get_max_threads();

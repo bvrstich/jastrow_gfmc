@@ -27,10 +27,13 @@ namespace global {
    //! parameter of the jastrow wavefunction
    extern double f;
 
+   //!time step
+   extern double dtau;
+
    //!number of omp threads
    extern int omp_num_threads;
 
-   void init(int,int,double);
+   void init(int,int,double,double);
 
    template<typename T>
       T rgen();

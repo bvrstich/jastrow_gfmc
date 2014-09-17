@@ -179,3 +179,21 @@ int Distribution::draw() const {
    return trial;
 
 }
+
+/** 
+ * normalize the distribution
+ * @return the total weight/norm of the distrubition
+ */
+double Distribution::normalize(){
+
+   double nrm = 0.0;
+
+   for(unsigned int i = 0;i < this->size();++i)
+      nrm += (*this)[i];
+
+   for(unsigned int i = 0;i < this->size();++i)
+      (*this)[i] /= nrm;
+
+   return nrm;
+
+}
