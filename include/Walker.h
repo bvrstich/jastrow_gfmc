@@ -37,8 +37,6 @@ class Walker : public vector< bool > {
 
       double gOverlap() const;
 
-      double gEL() const;
-
       double pot_en() const;
 
       void save(const char *);
@@ -49,9 +47,6 @@ class Walker : public vector< bool > {
 
       //!The walker weight
       double weight;
-
-      //!local energy
-      double EL;
 
       //! overlap
       double overlap;

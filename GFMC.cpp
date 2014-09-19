@@ -79,7 +79,7 @@ void GFMC::walk(const int n_steps){
 
       double scaling = Nw / wsum;
 
-      double ET = 1.0/dtau * ( 1 - 1.0/scaling);
+      ET = 1.0/dtau * ( 1 - 1.0/scaling);
 
 #ifdef _DEBUG
       cout << "        Step = " << step << endl;
@@ -120,8 +120,8 @@ void GFMC::walk(const int n_steps){
  */
 double GFMC::propagate(){
 
-   double sum = 0.0;
    double total_weight = 0.0;
+   double sum = 0.0;
 
 #pragma omp parallel for reduction(+:sum,total_weight)
    for(unsigned int i = 0;i < walker.size();i++){
@@ -133,16 +133,18 @@ double GFMC::propagate(){
 #endif
 
       //construct distribution
-      dist[myID].construct(walker[i],dtau,EP);
+      dist[myID].construct(walker[i],dtau,0.0);
       double nrm = dist[myID].normalize();
 
       //draw new walker
       int pick = dist[myID].draw();
 
-      sum += dist[myID].energy();
-
+      //copy the correct walker
       walker[i] = dist[myID].gwalker(pick);
 
+      //set the energy
+      sum += walker[i].gWeight() * dist[myID].energy();
+      
       //multiply weight
       walker[i].multWeight(nrm);
 
@@ -166,7 +168,7 @@ void GFMC::write(const int step){
 
    ofstream output(filename,ios::app);
    output.precision(16);
-   output << step << "\t\t" << walker.size() << "\t" << EP/(double)(Lx*Ly) << endl;
+   output << step << "\t\t" << walker.size() << "\t" << EP/(double)(Lx*Ly) << "\t" << ET /(double)(Lx*Ly) << endl;
    output.close();
 
 }
@@ -182,7 +184,7 @@ void GFMC::dump(const char *filename){
    for(unsigned int i = 0;i < walker.size();++i){
 
       for(int row = 0;row < Ly;++row)
-         for(int col = 0;col < Ly;++col)
+         for(int col = 0;col < Lx;++col)
             out << walker[i][row*Lx + col] << " ";
       out << endl;
 
@@ -198,11 +200,10 @@ void GFMC::PopulationControl(double scaling){
    double minw = 1.0;
    double maxw = 1.0;
 
-   double sum = 0.0;
+   for(unsigned int i = 0;i < walker.size();i++)
+      walker[i].multWeight(scaling);
 
    for(unsigned int i = 0;i < walker.size();i++){
-
-      walker[i].multWeight(scaling);
 
       double weight = walker[i].gWeight();
 
@@ -212,7 +213,7 @@ void GFMC::PopulationControl(double scaling){
       if(weight > maxw)
          maxw = weight;
 
-      if (weight < 0.25){ //Energy doesn't change statistically
+      if (weight < 0.1){ //Energy doesn't change statistically
 
          int nCopies = (int) ( weight + RN());
 
@@ -230,7 +231,7 @@ void GFMC::PopulationControl(double scaling){
 
       }
 
-      if(weight > 1.5){ //statically energy doesn't change
+      if(weight > 2.0){ //statically energy doesn't change
 
          int nCopies =(int) ( weight + RN());
          double new_weight = weight / (double) nCopies;
@@ -250,9 +251,17 @@ void GFMC::PopulationControl(double scaling){
 
       }
 
-      sum += weight;
-
    }
+
+   double sum = 0.0;
+
+   for(unsigned int i = 0;i < walker.size();++i)
+      sum += walker[i].gWeight();
+   
+   //rescale the weights to unity for correct ET estimate in next iteration
+   for(unsigned int i = 0;i < walker.size();++i)
+      walker[i].multWeight((double)Nw/sum);
+
 
 #ifdef _DEBUG
    cout << endl;

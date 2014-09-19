@@ -46,6 +46,9 @@ class GFMC {
       //!projected energy at current timestep
       double EP;
 
+      //!target energy, calculated from scaling
+      double ET;
+
       //!The walkers
       std::vector<Walker> walker;
 

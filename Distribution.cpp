@@ -147,7 +147,7 @@ void Distribution::construct(const Walker &walker_i,double dtau,double ET){
 }
 
 /** 
- * get the energy, first the distribution has to be filled!
+ * get the local energy for the 'seed' walker, first the distribution has to be filled!
  */
 double Distribution::energy() const {
 

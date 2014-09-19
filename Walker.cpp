@@ -43,7 +43,7 @@ Walker::Walker(int option) : std::vector< bool >( Lx * Ly ){
 Walker::Walker(const Walker &walker) : std::vector< bool >(walker) {
 
    this->weight = walker.gWeight();
-   this->EL = walker.gEL();
+   this->overlap = walker.gOverlap();
 
 }
 
@@ -85,15 +85,6 @@ void Walker::sWeight(double new_weight){
 double Walker::gOverlap() const{
 
    return overlap; 
-
-}
-
-/** 
- * @return the overlap of the walker with the Trial
- */
-double Walker::gEL() const{
-
-   return EL; 
 
 }
 
